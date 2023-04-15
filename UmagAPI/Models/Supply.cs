@@ -3,17 +3,11 @@
 namespace UmagAPI.Models {
     public class Supply {
         [Key]
-        public long Id { get; set; }
-        public string Barcode { get; set; }
+        public int Id { get; set; }
+        public long Barcode { get; set; }
         public int Quantity { get; set; }
-        public decimal Price { get; set; }
-        public DateTime Time { get; set; }
+        public int Price { get; set; }
+        public DateTime SupplyTime { get; set; }
 
-        public Supply(string barcode, int quantity, decimal price, DateTime time) {
-            Barcode= barcode;
-            Quantity= quantity;
-            Price= price;
-            Time= time;
-        }
     }
 }

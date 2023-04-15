@@ -18,12 +18,12 @@ namespace UmagAPI.Migrations
                 schema: "application",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Barcode = table.Column<string>(type: "text", nullable: false),
+                    Barcode = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    Time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Price = table.Column<int>(type: "integer", nullable: false),
+                    SaleTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,17 +35,29 @@ namespace UmagAPI.Migrations
                 schema: "application",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Barcode = table.Column<string>(type: "text", nullable: false),
+                    Barcode = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    Time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Price = table.Column<int>(type: "integer", nullable: false),
+                    SupplyTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tbsupplies", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbsales_Barcode_SaleTime",
+                schema: "application",
+                table: "tbsales",
+                columns: new[] { "Barcode", "SaleTime" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbsupplies_Barcode_SupplyTime",
+                schema: "application",
+                table: "tbsupplies",
+                columns: new[] { "Barcode", "SupplyTime" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

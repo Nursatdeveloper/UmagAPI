@@ -14,10 +14,12 @@ namespace UmagAPI.Data {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<Supply>()
-                .ToTable("tbsupplies", schema: "application");
+                .ToTable("tbsupplies", schema: "application")
+                .HasIndex(b => new { b.Barcode, b.SupplyTime });
 
             modelBuilder.Entity<Sale>()
-                .ToTable("tbsales", schema: "application");
+                .ToTable("tbsales", schema: "application")
+                .HasIndex(b => new { b.Barcode, b.SaleTime });
 
         }
     }

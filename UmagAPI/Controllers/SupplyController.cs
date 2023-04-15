@@ -31,7 +31,7 @@ namespace UmagAPI.Controllers {
             var entity = await _context.Set<Supply>().AddAsync(supply);
             await _context.SaveChangesAsync();
 
-            return new JsonResult(new{ id = entity.Entity.Id });
+            return new JsonResult(new{ id = 1 });
         }
     }
 }

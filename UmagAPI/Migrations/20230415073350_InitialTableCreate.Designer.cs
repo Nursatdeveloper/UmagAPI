@@ -12,7 +12,7 @@ using UmagAPI.Data;
 namespace UmagAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230415064721_InitialTableCreate")]
+    [Migration("20230415073350_InitialTableCreate")]
     partial class InitialTableCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,52 +26,54 @@ namespace UmagAPI.Migrations
 
             modelBuilder.Entity("UmagAPI.Models.Sale", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<long>("Barcode")
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Barcode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Time")
+                    b.Property<DateTime>("SaleTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Barcode", "SaleTime");
 
                     b.ToTable("tbsales", "application");
                 });
 
             modelBuilder.Entity("UmagAPI.Models.Supply", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<long>("Barcode")
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Barcode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Time")
+                    b.Property<DateTime>("SupplyTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Barcode", "SupplyTime");
 
                     b.ToTable("tbsupplies", "application");
                 });
