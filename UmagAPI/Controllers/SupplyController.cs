@@ -8,7 +8,7 @@ namespace UmagAPI.Controllers {
         public async Task<IActionResult> Get([FromQuery] string barcode, DateTime fromTime, DateTime toTime) {
             // retriev from db
             // business logic
-            return new JsonResult("Hello1");
+            return new JsonResult("Hello12");
         }
     }
 }
