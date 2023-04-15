@@ -13,25 +13,58 @@ namespace UmagAPI.Controllers {
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] string barcode, DateTime fromTime, DateTime toTime) {
-            // retriev from db
-            // business logic
-            return new JsonResult("Hello12");
+        public JsonResult Get([FromQuery] long barcode, DateTime fromTime, DateTime toTime) {
+            var supplies = _context.TbSupplies
+                .ToArray()
+                .Where(x => x.Barcode == barcode && x.SupplyTime.InRange(fromTime, toTime))
+                .ToList();
+            return new JsonResult(supplies);
+        }
+        [HttpGet("{id}")]
+        public async Task<JsonResult> GetById(int id) {
+            var supply = await _context.Set<Supply>().FindAsync(id);
+            return new JsonResult(supply);
         }
 
         [HttpPost]
         public async Task<JsonResult> Post([FromBody] CreateSupplyDto createSupplyDto) {
-            var supply = new Supply(
-                createSupplyDto.Barcode,
-                createSupplyDto.Quantity,
-                createSupplyDto.Price,
-                createSupplyDto.Time
-            );
+            var supply = new Supply() {
+                Barcode = createSupplyDto.Barcode,
+                Quantity = createSupplyDto.Quantity,
+                Price = createSupplyDto.Price,
+                SupplyTime = createSupplyDto.SupplyTime
+            };
 
             var entity = await _context.Set<Supply>().AddAsync(supply);
             await _context.SaveChangesAsync();
 
-            return new JsonResult(new{ id = 1 });
+            return new JsonResult(new{ id = entity.Entity.Id });
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateSupplyDto updateSupplyDto) {
+            var supply = await _context.TbSupplies.FindAsync(id);
+            if(supply != null) {
+                supply.Barcode = updateSupplyDto.Barcode;
+                supply.Quantity = updateSupplyDto.Quantity;
+                supply.Price = updateSupplyDto.Price;
+                supply.SupplyTime = updateSupplyDto.SupplyTime;
+                _context.TbSupplies.Update(supply);
+                _context.SaveChanges();
+            }
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Delete(int id) {
+            var supply = await _context.TbSupplies.FindAsync(id);
+            if(supply != null) {
+                _context.TbSupplies.Remove(supply);
+                _context.SaveChanges();
+            }
+            return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }
