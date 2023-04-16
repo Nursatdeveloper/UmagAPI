@@ -6,7 +6,8 @@ using static System.Reflection.Metadata.BlobBuilder;
 namespace UmagAPI.Data {
     public class ApplicationDbContext : DbContext{
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
-
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            Database.Migrate();
         }
 
         public DbSet<Sale> TbSales{ get; set; }

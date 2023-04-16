@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  umagapi:
+    image: nursatzeinolla/umag-api:prod-v1.1
+    container_name: umag_api
+    depends_on: 
+      - "postgres"
+    build:
+      context: .
+      dockerfile: UmagAPI/Dockerfile
+    environment:
+      DB_Host: "postgres"
+      DB_Port: "5432"
+      DB_Name: "dbUmag"
+      DB_User: "postgres"
+      DB_Password: "root"
+      HttpsRedirection: "enable"
+    ports:
+      - "5000:80"
+      - "5001:443"
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "root"
+    ports:
+      - "5432:5432"
+    volumes:
+      - psqldata:/var/lib/postgres/data
+
+volumes:
+  psqldata:

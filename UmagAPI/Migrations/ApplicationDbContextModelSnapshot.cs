@@ -36,7 +36,13 @@ namespace UmagAPI.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Profit")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Revenue")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("SaleTime")

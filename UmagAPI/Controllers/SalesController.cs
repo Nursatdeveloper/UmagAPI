@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using UmagAPI.Data;
 using UmagAPI.DTOs;
 using UmagAPI.Models;
@@ -31,11 +32,39 @@ namespace UmagAPI.Controllers {
         [HttpPost]
         public async Task<JsonResult> Post([FromBody] CreateSaleDto createSaleDto) {
             var sale = new Sale() {
-                Barcode = createSaleDto.Barcode,
-                Quantity = createSaleDto.Quantity,
-                Price = createSaleDto.Price,
-                SaleTime = createSaleDto.SaleTime
+                Barcode = createSaleDto.Barcode, 
+                Quantity = createSaleDto.Quantity, 
+                Price = createSaleDto.Price, 
+                SaleTime = DateTime.Parse(createSaleDto.SaleTime),
             };
+
+            var supplies = await _context.TbSupplies
+                .OrderBy(x => x.SupplyTime)
+                .Where(x => x.Barcode == createSaleDto.Barcode && x.SupplyTime.CompareTo(sale.SaleTime) <= 0)
+                .ToListAsync();
+
+            foreach(var item in supplies) {
+                if(item.Quantity > createSaleDto.Quantity) {
+                    sale.Profit += createSaleDto.Quantity * (createSaleDto.Price - item.Price);
+                    sale.Revenue += createSaleDto.Quantity * createSaleDto.Price;
+                    item.Quantity -= createSaleDto.Quantity;
+                    _context.TbSupplies.Update(item);
+                    item.SupplyTime = item.SupplyTime.ToUniversalTime();
+                    _context.SaveChanges();
+                    createSaleDto.Quantity = 0;
+                    break;
+                } else {
+                    createSaleDto.Quantity -= item.Quantity;
+                    sale.Profit += item.Quantity * (createSaleDto.Price - item.Price);
+                    sale.Revenue += item.Quantity * createSaleDto.Price;
+                    _context.TbSupplies.Remove(item);
+                    _context.SaveChanges();
+                }
+            }
+            if(createSaleDto.Quantity > 0) {
+                sale.Profit += createSaleDto.Quantity * createSaleDto.Price;
+                sale.Revenue += createSaleDto.Quantity * createSaleDto.Price;
+            }
 
             var entity = await _context.Set<Sale>().AddAsync(sale);
             await _context.SaveChangesAsync();
@@ -51,7 +80,7 @@ namespace UmagAPI.Controllers {
                 sale.Barcode = updateSaleDto.Barcode;
                 sale.Quantity = updateSaleDto.Quantity;
                 sale.Price = updateSaleDto.Price;
-                sale.SaleTime = updateSaleDto.SaleTime;
+                sale.SaleTime = DateTime.Parse(updateSaleDto.SaleTime);
                 _context.TbSales.Update(sale);
                 _context.SaveChanges();
             }

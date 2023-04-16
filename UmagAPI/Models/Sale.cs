@@ -8,5 +8,7 @@ namespace UmagAPI.Models {
         public int Quantity { get; set; }
         public int Price { get; set; }
         public DateTime SaleTime { get; set; }
+        public int Revenue { get; set; }
+        public int Profit { get; set; }
     }
 }

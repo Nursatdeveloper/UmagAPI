@@ -12,8 +12,8 @@ using UmagAPI.Data;
 namespace UmagAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230415073350_InitialTableCreate")]
-    partial class InitialTableCreate
+    [Migration("20230415124341_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,7 +38,13 @@ namespace UmagAPI.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Profit")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Revenue")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("SaleTime")

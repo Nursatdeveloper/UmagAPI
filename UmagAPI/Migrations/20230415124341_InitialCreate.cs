@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace UmagAPI.Migrations
 {
-    public partial class InitialTableCreate : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -23,7 +23,9 @@ namespace UmagAPI.Migrations
                     Barcode = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     Price = table.Column<int>(type: "integer", nullable: false),
-                    SaleTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    SaleTime = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    Revenue = table.Column<int>(type: "integer", nullable: false),
+                    Profit = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,7 +42,7 @@ namespace UmagAPI.Migrations
                     Barcode = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     Price = table.Column<int>(type: "integer", nullable: false),
-                    SupplyTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    SupplyTime = table.Column<DateTime>(type: "timestamp", nullable: false)
                 },
                 constraints: table =>
                 {

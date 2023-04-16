@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using UmagAPI.Data;
 using UmagAPI.DTOs;
 using UmagAPI.Models;
@@ -8,8 +9,10 @@ namespace UmagAPI.Controllers {
     [Route("api/supplies")]
     public class SupplyController : ControllerBase {
         private readonly ApplicationDbContext _context;
-        public SupplyController(ApplicationDbContext context) {
+        private readonly IMemoryCache _memoryCache;
+        public SupplyController(ApplicationDbContext context, IMemoryCache memoryCache) {
             _context= context;
+            _memoryCache= memoryCache;
         }
 
         [HttpGet]
@@ -32,7 +35,7 @@ namespace UmagAPI.Controllers {
                 Barcode = createSupplyDto.Barcode,
                 Quantity = createSupplyDto.Quantity,
                 Price = createSupplyDto.Price,
-                SupplyTime = createSupplyDto.SupplyTime
+                SupplyTime = DateTime.Parse(createSupplyDto.SupplyTime)
             };
 
             var entity = await _context.Set<Supply>().AddAsync(supply);
@@ -49,7 +52,7 @@ namespace UmagAPI.Controllers {
                 supply.Barcode = updateSupplyDto.Barcode;
                 supply.Quantity = updateSupplyDto.Quantity;
                 supply.Price = updateSupplyDto.Price;
-                supply.SupplyTime = updateSupplyDto.SupplyTime;
+                supply.SupplyTime = DateTime.Parse(updateSupplyDto.SupplyTime);
                 _context.TbSupplies.Update(supply);
                 _context.SaveChanges();
             }
