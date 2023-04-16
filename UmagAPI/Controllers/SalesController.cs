@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using UmagAPI.Data;
 using UmagAPI.DTOs;
 using UmagAPI.Models;
@@ -10,8 +11,10 @@ namespace UmagAPI.Controllers {
     
     public class SalesController : ControllerBase {
         private readonly ApplicationDbContext _context;
-        public SalesController(ApplicationDbContext context) {
+        private readonly IMemoryCache _memoryCache;
+        public SalesController(ApplicationDbContext context, IMemoryCache memoryCache) {
             _context= context;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet]
@@ -65,6 +68,13 @@ namespace UmagAPI.Controllers {
                 sale.Profit += createSaleDto.Quantity * createSaleDto.Price;
                 sale.Revenue += createSaleDto.Quantity * createSaleDto.Price;
             }
+
+            var cachedValue =  _memoryCache.GetOrCreate<Dictionary<string, List<int>>>(
+                "SalesCache",
+                cacheEntry => {
+                    cacheEntry.SlidingExpiration = TimeSpan.FromHours(1);
+                    return new Dictionary<string, List<int>>();
+                });
 
             var entity = await _context.Set<Sale>().AddAsync(sale);
             await _context.SaveChangesAsync();
